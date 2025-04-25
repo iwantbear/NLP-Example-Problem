@@ -1,0 +1,11 @@
+Classification Report (Filtered):
+class_0:
+  precision: 0.9065155807365439
+  recall: 0.9397944199706314
+  f1-score: 0.9228550829127614
+
+class_1:
+  precision: 0.9332247557003257
+  recall: 0.8967136150234741
+  f1-score: 0.9146049481245011
+
