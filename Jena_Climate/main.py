@@ -16,7 +16,6 @@ from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Data PreProcessing
-
 df = pd.read_csv('/Users/hwang-gyuhan/Desktop/Collage/4-1/자연어처리/Mid/dataset/Jena_Climate/jena_climate_2009_2016.csv')
 
 numeric_df = df.select_dtypes(include=[np.number])
@@ -137,10 +136,14 @@ def visualize_loss(history, title):
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend()
-    plt.savefig("/Users/hwang-gyuhan/Desktop/Collage/4-1/자연어처리/Mid/Jena_Climate/training_validation_loss.png")  # 저장
+    plt.savefig("/Users/hwang-gyuhan/Desktop/Collage/4-1/자연어처리/Mid/Jena_Climate/training_validation_loss.png")  
     plt.show()
 
+visualize_loss(history, "Training and Validation Loss")
 
+std = data_std[1]
+avg = data_mean[1]
+   
 def show_plot(plot_data, delta, title):
     labels = ["History", "True Future", "Model Prediction"]
     marker = [".-", "rx", "go"]
@@ -159,6 +162,16 @@ def show_plot(plot_data, delta, title):
     plt.legend()
     plt.xlim([time_steps[0], (future + 5) * 2])
     plt.xlabel("Time-Step")
-    plt.savefig(f"/Users/hwang-gyuhan/Desktop/Collage/4-1/자연어처리/Mid/Jena_Climate/prediction_plot.png")  # 저장
     plt.show()
     return
+
+
+for x, y in dataset_val.take(20):
+    p = x[0][:, 1].numpy()
+    q = y[0].numpy()
+    p = p*std + avg
+    q = q*std + avg
+    pred = model.predict(x)[0]
+    pred = (pred*std + avg)
+    
+    show_plot([p, q, pred], 12, "Single Step Prediction")
