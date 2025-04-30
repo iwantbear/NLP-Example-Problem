@@ -116,12 +116,49 @@ model.summary()
 
 
 early_stopper = EarlyStopping(monitor="val_loss", min_delta=0, patience=7, restore_best_weights=True)
-checkpointer = ModelCheckpoint(monitor="val_loss", save_freq="epoch",filepath="{epoch:03d}-{val_loss:.5f}.h5", verbose=1, save_weights_only=True, save_best_only=True)
 lr_reducer = ReduceLROnPlateau(monitor="val_loss", factor=0.169, patience=3, verbose=1)
 
 history = model.fit(
     dataset_train,
     epochs=50,
     validation_data=dataset_val,
-    callbacks=[early_stopper, checkpointer, lr_reducer],
+    callbacks=[early_stopper, lr_reducer],
 )
+
+def visualize_loss(history, title):
+    loss = history.history["loss"]
+    val_loss = history.history["val_loss"]
+    epochs = range(len(loss))
+    plt.figure()
+    
+    plt.plot(epochs, loss, "b", label="Training loss")
+    plt.plot(epochs, val_loss, "r", label="Validation loss")
+    plt.title(title)
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.savefig("/Users/hwang-gyuhan/Desktop/Collage/4-1/자연어처리/Mid/Jena_Climate/training_validation_loss.png")  # 저장
+    plt.show()
+
+
+def show_plot(plot_data, delta, title):
+    labels = ["History", "True Future", "Model Prediction"]
+    marker = [".-", "rx", "go"]
+    time_steps = list(range(-(plot_data[0].shape[0]), 0))
+    if delta:
+        future = delta
+    else:
+        future = 0
+
+    plt.title(title)
+    for i, val in enumerate(plot_data):
+        if i:
+            plt.plot(future, plot_data[i], marker[i], markersize=10, label=labels[i])
+        else:
+            plt.plot(time_steps, plot_data[i].flatten(), marker[i], label=labels[i])
+    plt.legend()
+    plt.xlim([time_steps[0], (future + 5) * 2])
+    plt.xlabel("Time-Step")
+    plt.savefig(f"/Users/hwang-gyuhan/Desktop/Collage/4-1/자연어처리/Mid/Jena_Climate/prediction_plot.png")  # 저장
+    plt.show()
+    return
